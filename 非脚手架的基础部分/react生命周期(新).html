@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>react生命周期</title>
+</head>
+<body>
+<div id="test"></div>
+
+<!-- 引入react核心库 -->
+<script type="text/javascript" src="js/17.0.1/react.development.js"></script>
+<!-- 引入react-dom，用于支持react操作DOM -->
+<script type="text/javascript" src="js/17.0.1/react-dom.development.js"></script>
+<!--  引入babel,用于将jsx转为js -->
+<script type="text/javascript" src="js/17.0.1/babel.min.js"></script>
+
+<script type="text/babel">
+  //创建组件
+  class Count extends React.Component{
+      constructor(props) {
+          console.log('Count-constructor')
+          super(props);
+          //初始化状态
+          this.state = {count:0}
+      }
+
+      add = ()=>{
+          //获取原状态
+          const {count} = this.state
+          this.setState({count: count+1})
+      }
+
+      //强制更新按钮的回调
+      force = () => {
+          this.forceUpdate()
+      }
+
+      render(){
+          console.log('Count-render')
+          const {count} = this.state
+          return (
+              <div>
+                  <h2>当前求和为: {count}</h2>
+                  <button onClick={this.add}>点我+1</button>
+                  <button onClick={this.force}>强制更新</button>
+              </div>
+          )
+      }
+      //
+      static getDerivedStateFromProps(){
+          console.log('getDerivedStateFromProps')
+          return null
+      }
+
+      componentDidMount(){
+          console.log('componentDidMount')
+      }
+
+      //在更新之前获得快照
+      getSnapshotBeforeUpdate(){
+          console.log('getSnapshotBeforeUpdate')
+          return '逮虾户'
+      }
+
+      componentDidUpdate(prevProps,prevState,snapshotValue){
+          console.log('componentDidUpdate',prevProps,prevState,snapshotValue)
+      }
+
+
+  }
+
+  class A extends React.Component{
+      state = {carName: '奔驰'}
+
+      changeCar = () => {
+          this.setState({carName: '奥拓'})
+      }
+
+      render(){
+          console.log('render')
+          return(
+              <div>
+                <div>我是A组件</div>
+                  <button onClick={this.changeCar}>换车</button>
+                <B carName={this.state.carName}/>
+              </div>
+          )
+      }
+
+  }
+  class B extends React.Component{
+      render(){
+          return(
+              <div>我是B组件，接收到的车是：{this.props.carName}</div>
+          )
+      }
+
+  }
+
+  //渲染组件
+  ReactDOM.render(<Count count={199}/>,document.getElementById('test'))
+
+
+</script>
+
+</body>
+</html>

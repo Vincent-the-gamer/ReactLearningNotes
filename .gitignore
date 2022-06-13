@@ -21,3 +21,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# .idea file
+.idea
+
+# 去除临时src
+/src

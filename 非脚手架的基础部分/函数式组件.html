@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>React测试</title>
+    <style>
+        .title{
+            background-color: orange;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+<!-- 准备好一个"容器" -->
+<div id="test"></div>
+
+<!-- 引入react核心库 -->
+<script type="text/javascript" src="js/react.development.js"></script>
+<!-- 引入react-dom，用于支持react操作DOM -->
+<script type="text/javascript" src="js/react-dom.development.js"></script>
+<!--  引入babel,用于将jsx转为js -->
+<script type="text/javascript" src="js/babel.min.js"></script>
+
+<script type="text/babel">
+//1.创建函数式组件
+  function Demo(){
+      console.log(this) // 此处的this是undefined,因为babel编译后开启了严格模式 use strict
+      return <h2>我是用函数定义的组件（适用于【简单组件】的定义)</h2>
+  }
+//2.渲染组件到页面
+ReactDOM.render(<Demo/>,document.getElementById('test'))
+
+</script>
+
+</body>
+</html>

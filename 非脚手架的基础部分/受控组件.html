@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>受控组件</title>
+</head>
+<body>
+<div id="test"></div>
+
+<!-- 引入react核心库 -->
+<script type="text/javascript" src="js/react.development.js"></script>
+<!-- 引入react-dom，用于支持react操作DOM -->
+<script type="text/javascript" src="js/react-dom.development.js"></script>
+<!--  引入babel,用于将jsx转为js -->
+<script type="text/javascript" src="js/babel.min.js"></script>
+
+<script type="text/babel">
+  //创建组件
+
+  class Login extends React.Component{
+      state = {
+          username: '',   //用户名
+          password: ''    //密码
+      }
+
+      render(){
+          return (
+              <form action="https://www.bilibili.com/video/BV19b411H7YT?p=11" onSubmit={this.handleSubmit}>
+                  用户名：<input onChange={this.saveFormData('username')} name="username" type="text"/>
+                  密码：<input onChange={this.saveFormData('password')} name="password" type="password"/>
+                  <button>登录</button>
+              </form>
+          )
+      }
+
+      //表单事件的回调
+      handleSubmit = (event)=> {
+          event.preventDefault() //阻止表单默认提交事件
+         const {username,password} = this.state
+         alert(`你输入的用户名是：${username},密码是：${password}`)
+      }
+
+      //保存表单数据到状态中
+      saveFormData = (dataType)=>{
+            return (event) => {
+               this.setState({
+                   [dataType]: event.target.value
+               })
+            }
+      }
+  }
+  //渲染组件
+  ReactDOM.render(<Login/>,document.getElementById('test'))
+
+
+</script>
+
+</body>
+</html>
