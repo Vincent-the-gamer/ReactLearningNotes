@@ -4,6 +4,18 @@
 
 React.js的学习笔记，供本人随时回顾，也欢迎大家参考学习
 
+## 写给读者
+该笔记对应的视频教程：https://www.bilibili.com/video/BV1wy4y1D7JT \
+该笔记的使用顺序：
+请没有前端框架学习经验的小伙伴从非脚手架的基础部分开始用起，\
+当然，我的笔记（其实是一个能直接跑起来的项目）是为了您省去一些不必要的配置麻烦，
+在antd组件库的使用这一段，文档和方法完全和视频中不同(视频中的是旧版），所以让您不用再去花时间折腾。\
+\
+antd官方文档： https://ant-design.gitee.io/docs/react/introduce-cn \
+Redux中文文档： https://www.redux.org.cn/ （我还没学完这部分，暂时不上笔记）
+
+
+
 ## 部分实用知识点
 ### BrowserRouter与HashRouter的区别
  1. 底层原理不一样  \
