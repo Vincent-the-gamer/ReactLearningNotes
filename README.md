@@ -125,9 +125,13 @@ this.props.history.replace("/xxx")
 ~~~
  - src
     - redux
+       - actions
+          - xxx.js //直接写组件名
+          - yyy.js
+       - reducers
+          - xxx.js //直接写组件名
+          - yyy.js
        - constant.js //存放常量值
-       - xx_action.js  //写actions
-       - xx_reducer.js //写reducer
        - store.js  //创建store的总文件
 ~~~
 
