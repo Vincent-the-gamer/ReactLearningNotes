@@ -47,6 +47,33 @@ import Count from "./components/Count";
 ~~~
 
 ## 部分实用知识点
+### 纯函数和高阶函数
+#### 纯函数
+ 只要是同样的输入，必定得到同样的输出\
+比如
+~~~
+ function a(param){
+   return param;
+ }
+~~~
+规则：
+1. 不能改写参数数据。
+2. 不会产生任何副作用，比如网络请求，输入和输出设备。
+3. 不能调用Date.now()或者Math.random()等不纯的方法 ——
+同样的输入(undefined)没有得到同样的输出。
+4. Redux的Reducer函数必须是纯函数。
+
+#### 高阶函数
+当一个函数的返回值还是函数，它就是高阶函数。\
+比如:
+~~~
+ function a(){
+   return () => {
+     xxxx
+   }
+ }
+~~~
+
 ### BrowserRouter与HashRouter的区别
  1. 底层原理不一样  \
   BrowserRouter使用的是H5的History API,不兼容IE9以下版本。
@@ -86,6 +113,11 @@ React:
 ~~~ 
 <Link to="/xxx">aa</Link>    //push模式（默认）
 <Link replace to="/xxx">bb</Link>   //replace模式
+
+//React编程式路由导航
+//注意，在非路由组件中，需要暴露组件时包裹上一层： withRouter(<组件名/>）
+this.props.history.push("/xxx")
+this.props.history.replace("/xxx")
 ~~~
 
 ### Redux
@@ -143,8 +175,12 @@ export default createStore(countReducer,applyMiddleware(thunk))
 注意： 异步action不是必须要写的，完全可以自己等待异步任务的结果后
 再去分发同步action。
 
-### React-Redux，让你在React中更舒服的用Redux
+### React-Redux插件库，让你在React中更舒服的用Redux
+#### Redux-React案例完整版
+如果想查看比较完整，工程结构和变量命名比较规范的Redux-React案例，
+请直接打开31_src_React-Redux最终版
 
+#### 基本使用
 1. 所有的UI组件都应该包裹一个父级容器，叫做容器组件
 2. 容器组件是真正和redux打交道的，里面可以随意的使用redux的api
 3. UI组件中不能使用任何redux的api。
@@ -153,8 +189,137 @@ export default createStore(countReducer,applyMiddleware(thunk))
   - 用于操作状态的方法
 5. 备注：容器给UI传递：状态、操作状态的方法，均通过props传递
 
-注意： 在容器组件中，不能直接引入store，要去该容器父级组件里面用props传给
-容器组件（暂时，后面有办法优化）
+注意： 在容器组件中，不能直接引入store，要去该容器父级组件(比如App)里面用props传给
+容器组件。
 
+#### 优化
+##### Store的引入
+在index.js中引入react-redux的Provider,它会自动给所有容器组件
+自动引入store
+~~~
+const root = ReactDOM.createRoot(document.getElementById('root'))
+
+root.render(
+    <React.StrictMode>
+       <Provider store={store}>
+           <App/>
+       </Provider>
+    </React.StrictMode>
+);
+~~~
+##### Container(容器组件)的写法
+容器组件中使用react-redux库的connect()()高阶函数来连接你的普通UI组件和redux的store,
+而不是使用普通类式组件的写法。\
+
+~~~
+ connect(mapStateToProps,mapDispatchToProps)(UI组件)
+   -mapStateToProps: 映射状态，返回值是一个对象
+   -mapDispatchToProps: 映射操作状态的方法，返回值是一个对象
+~~~
+可以将mapDispatchToProps简写成一个对象，而不是一个函数
+~~~
+export default connect(
+    //映射状态 mapStateToProps
+    state => ({count: state}),
+
+    //映射操作状态的方法 mapDispatchToProps的简写
+    //react-redux的api自动将action分发(dispatch)
+    {
+        jia: createIncrementAction,
+        jian: createDecrementAction,
+        jiaAsync: createIncrementAsyncAction
+    }
+)(Count)
+~~~
+
+##### Store中状态改变的监视
+如果您使用了react-redux, connect()()实现了监测store中状态改变，不用再去index.js里面对App组件
+store.subscribe()订阅监测了
+
+##### 文件的结构
+容器组件和UI组件可以整合成一个文件，在里面写子类(类似于Java的内部类)\
+此后，可以不再保留components文件夹，留下container就行。\
+在UI组件中，使用this.props.xxx读取状态
+~~~
+class Count extends Component {
+  xxxxxx
+  xxx = this.props.xxx
+}
+
+export default connect(xxxxx,xxxxx)(Count)
+~~~
+
+备注：
+1. 容器组件中的store是靠父级组件props传进去的，而不是在容器组件中直接引入
+2. mapDispatchToProps也可以是一个对象，此时可以简写，将value直接写成actions
+函数，不需要手动传值和接收dispatch参数和调用dispatch，react-redux会帮你自动干这事。
+
+##### react-redux数据共享
+注意将所有的reducer合并，使用combineReducers，合并reducers以后，
+state是一个拥有所有状态的总对象，所有组件都可以通过key取到对应的值
+~~~
+//从redux身上引入combineReducers
+import {combineReducers} from "redux";
+
+//汇总所有reducer，变为一个总的reducer
+const allReducers = combineReducers({
+    he: countReducer,
+    rens: personReducer
+})
+
+//暴露store
+export default createStore(allReducers)
+
+
+//在容器组件中，收到的state是所有内容的总和对象，从里面取出某个key的value
+export default connect(
+    state => ({
+        yiduiren: state.rens,
+        he: state.he
+    }), //映射状态
+    {  //映射操作方法
+        jiaYiRen: createAddPersonAction
+    }
+)(Person)
+
+//在UI组件中收到的总state，从里面取出某个key的value
+  let yyy = this.props.yiduiren
+~~~
+
+### 谷歌浏览器使用Redux DevTools开发者工具
+#### 安装
+这里单独提出来说是因为它不是直接在浏览器添加就能使用的，
+必须要在react工程里面安装一个库,还要进行配置
+~~~
+//安装：
+yarn add redux-devtools-extension
+~~~
+#### 配置
+~~~
+//配置：
+//在redux/store.js里面
+
+//引入redux-devtools-extension
+import {composeWithDevTools} from 'redux-devtools-extension'
+~~~
+这里分两种情况进行讨论：
+如果您在createStore里面只传入了一个参数，则可以将composeWithDevTools()
+写入第二个参数
+
+~~~
+export default createStore(allReducers,composeWithDevTools())
+~~~
+
+在部分案例中，我们使用了
+~~~
+export default createStore(allReducers,applyMiddleware(thunk))
+~~~
+来支持action中传入函数而不是对象，以此达成写入异步操作的办法\
+但是这也带来了一个问题，就是咱们的composeWithDevTools()不能直接传进去了\
+而是使用一个非常奇葩的办法：把applyMiddleware(thunk)作为composeWithDevTools
+的参数传进去，就很离谱好吧，不过这是别人API设计咱也没法啊。
+~~~
+export default createStore(allReducers,composeWithDevTools( applyMiddleware(thunk) ))
+~~~
 
 敬请期待后续内容...
