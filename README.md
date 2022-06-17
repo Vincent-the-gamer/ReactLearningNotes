@@ -6,6 +6,7 @@ React.js的学习笔记，供本人随时回顾，也欢迎大家参考学习
 
 ## 写给读者
 ### 基本内容
+扩展知识：https://github.com/Vincent-the-gamer/ReactExtension \
 该笔记对应的视频教程：https://www.bilibili.com/video/BV1wy4y1D7JT \
 该笔记的使用顺序：
 请没有前端框架学习经验的小伙伴从非脚手架的基础部分开始用起，\
@@ -326,4 +327,34 @@ export default createStore(allReducers,applyMiddleware(thunk))
 export default createStore(allReducers,composeWithDevTools( applyMiddleware(thunk) ))
 ~~~
 
-敬请期待后续内容...
+### 简单的项目打包部署上线方式
+Vue和React通用：
+打包
+~~~
+npm run build
+~~~
+React得到一个build文件，Vue得到一个dist文件
+
+部署：
+创建一个新文件夹，把上面的文件扔进去，在这个新文件夹下打开终端
+~~~
+npm init //初始化npm环境
+npm i //这一步通常会安装一些npm依赖
+npm i express //安装express
+
+~~~
+在Package.json中，给main取个喜欢的名字.js，然后在项目根目录创建该js
+在里面写入
+~~~
+// 导入 express 模块
+const express = require('express')
+// 创建 express 的服务器实例
+const app = express()
+// 托管静态资源
+app.use(express.static('./build'))  //dist还是build，看你是vue还是react
+// 调用 app.listen 方法，指定端口号并启动 web 服务器，端口号随意
+const port = 8080
+app.listen(port, function () {
+  console.log('该服务运行在：http://127.0.0.1:' + port)
+})
+~~~
